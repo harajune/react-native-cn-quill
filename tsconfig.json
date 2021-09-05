@@ -24,6 +24,7 @@
     "strict": true,
     "target": "esnext",
     "declaration": true,
-    "outDir": "lib"
-  }
+    "outDir": "lib",
+  },
+  "exclude": ["editor-html", "node_modules", "lib", "dist"]
 }
