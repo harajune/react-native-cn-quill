@@ -13,6 +13,8 @@ export const quill = new Quill(
   }
 )
 
+console.log('test ttttttttttttttttt')
+
 //TODO: make the code typescript
 var sendMessage = function (message) {
   if (window.ReactNativeWebView)

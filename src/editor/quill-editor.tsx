@@ -85,39 +85,7 @@ export default class QuillEditor extends React.Component<
   }
 
   private getInitalHtml = (): string => {
-    const {
-      initialHtml = '',
-      import3rdParties = 'local',
-      containerId = 'standalone-container',
-      theme = {
-        background: 'white',
-        color: 'rgb(32, 35, 42)',
-        placeholder: 'rgba(0,0,0,0.6)',
-      },
-      quill = {
-        id: 'editor-container',
-        placeholder: 'write here!',
-        modules: {
-          toolbar: false,
-        },
-        theme: 'snow',
-      },
-      customStyles = [],
-    } = this.props;
-
-    return createHtml({
-      initialHtml,
-      placeholder: quill.placeholder,
-      theme: quill.theme ? quill.theme : 'snow',
-      toolbar: JSON.stringify(quill.modules?.toolbar),
-      libraries: import3rdParties,
-      editorId: quill.id ? quill.id : 'editor-container',
-      containerId,
-      color: theme.color,
-      backgroundColor: theme.background,
-      placeholderColor: theme.placeholder,
-      customStyles,
-    });
+    return createHtml();
   };
 
   private getKey(): string {
