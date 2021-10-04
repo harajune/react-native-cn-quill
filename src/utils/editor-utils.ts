@@ -1,13 +1,14 @@
 // @ts-nocheck
 // TODO: remove nocheck
 import type { CustomFont } from 'src/types';
+// @ts-ignore
 import {
-  create_quill,
-  editor_css,
-  editor_js,
-  quill_bubble_css,
-  quill_snow_css,
-  quill_js,
+  create_quill, // eslint-disable-line
+  editor_css, // eslint-disable-line
+  editor_js, // eslint-disable-line
+  quill_bubble_css, // eslint-disable-line
+  quill_snow_css, // eslint-disable-line
+  quill_js, // eslint-disable-line
 } from '../constants/editor';
 
 export const getFontName = (font: string) => {
@@ -47,6 +48,6 @@ const Inital_Args = {
   customJS: '',
 } as CreateHtmlArgs;
 
-export const createHtml = (args: CreateHtmlArgs = Inital_Args) => {
+export const createHtml = (args: CreateHtmlArgs = Inital_Args) => {  // eslint-disable-line
   return require('../../dist/index.html');
 };
