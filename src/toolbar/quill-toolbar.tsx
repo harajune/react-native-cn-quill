@@ -5,8 +5,6 @@ import {
   ScrollView,
   Dimensions,
   StyleSheet,
-  StyleProp,
-  ViewStyle,
   Platform,
 } from 'react-native';
 import { fullOptions, basicOptions } from '../constants/toolbar-options';
@@ -16,6 +14,7 @@ import type {
   ToggleData,
   ColorListData,
   ToolbarCustom,
+  CustomStyles,
 } from '../types';
 import { lightTheme, darkTheme } from '../constants/themes';
 import { getToolbarData } from '../utils/toolbar-utils';
@@ -28,16 +27,9 @@ import type { FormatChangeData } from '../constants/editor-event';
 
 const WIDTH = Dimensions.get('window').width;
 
-interface customStyles {
-  toolbar?: StyleProp<ViewStyle>;
-  selection: StyleProp<ViewStyle>;
-  toolset?: object;
-  tool?: object;
-}
-
 interface QuillToolbarProps {
   options: Array<Array<string | object> | string | object> | 'full' | 'basic';
-  styles?: customStyles;
+  styles?: CustomStyles;
   editor: React.RefObject<QuillEditor>;
   theme: ToolbarTheme | 'dark' | 'light';
   custom?: ToolbarCustom;
@@ -48,6 +40,7 @@ interface ToolbarState {
   toolSets: Array<Array<ToggleData | TextListData | ColorListData>>;
   formats: object;
   theme: ToolbarTheme;
+  defaultFontFamily?: string;
 }
 
 export class QuillToolbar extends Component<QuillToolbarProps, ToolbarState> {
@@ -61,6 +54,7 @@ export class QuillToolbar extends Component<QuillToolbarProps, ToolbarState> {
       toolSets: [],
       formats: {},
       theme: lightTheme,
+      defaultFontFamily: undefined,
     };
   }
 
@@ -72,8 +66,11 @@ export class QuillToolbar extends Component<QuillToolbarProps, ToolbarState> {
     this.changeTheme();
   }
 
-  componentDidUpdate(prevProps: QuillToolbarProps) {
-    if (prevProps.options !== this.props.options) {
+  componentDidUpdate(prevProps: QuillToolbarProps, prevState: ToolbarState) {
+    if (
+      prevProps.options !== this.props.options ||
+      prevState.defaultFontFamily !== this.state.defaultFontFamily
+    ) {
       this.prepareIconset();
     }
     if (prevProps.theme !== this.props.theme) {
@@ -102,7 +99,11 @@ export class QuillToolbar extends Component<QuillToolbarProps, ToolbarState> {
     } else {
       toolbarOptions = options;
     }
-    const toolSets = getToolbarData(toolbarOptions, custom?.icons);
+    const toolSets = getToolbarData(
+      toolbarOptions,
+      custom?.icons,
+      this.state.defaultFontFamily
+    );
     this.setState({ toolSets });
   };
 
@@ -114,6 +115,11 @@ export class QuillToolbar extends Component<QuillToolbarProps, ToolbarState> {
       if (current) {
         this.editor = current;
         current.on('format-change', this.onFormatChange);
+        if (this.editor?.props.defaultFontFamily) {
+          this.setState({
+            defaultFontFamily: this.editor?.props.defaultFontFamily,
+          });
+        }
       }
     }, 200);
   };
@@ -129,19 +135,21 @@ export class QuillToolbar extends Component<QuillToolbarProps, ToolbarState> {
   renderToolbar = () => {
     const { styles, custom } = this.props;
     const { toolSets, theme, formats } = this.state;
-    const classes = makeStyles(theme);
+    const defaultStyles = makeStyles(theme);
+
+    const toolbarStyle = styles?.toolbar?.root
+      ? styles?.toolbar?.root(defaultStyles.toolbar)
+      : defaultStyles.toolbar;
     return (
       <ToolbarProvider
         theme={theme}
         format={this.format}
         selectedFormats={formats}
         custom={custom}
+        styles={styles}
       >
-        <SelectionBar
-          toolStyle={styles?.tool}
-          selectionStyle={styles?.selection}
-        />
-        <View style={[styles?.toolbar || classes.toolbar]}>
+        <SelectionBar />
+        <View style={toolbarStyle}>
           <ScrollView
             horizontal={true}
             bounces={false}
@@ -151,11 +159,7 @@ export class QuillToolbar extends Component<QuillToolbarProps, ToolbarState> {
               return (
                 object.length > 0 && (
                   <React.Fragment key={index}>
-                    <ToolSet
-                      tools={object}
-                      style={styles?.toolset}
-                      toolStyle={styles?.tool}
-                    />
+                    <ToolSet tools={object} />
                     {toolSets.length > index && (
                       <ToolbarSeperator color={theme.color} />
                     )}

@@ -73,6 +73,11 @@ export interface ToolbarCustom {
   icons?: Record<string, any>;
 }
 
+export interface CustomFont {
+  name: string;
+  css: string;
+}
+
 export interface QuillConfig {
   id?: string;
   modules?: {
@@ -80,4 +85,51 @@ export interface QuillConfig {
   };
   theme?: 'snow' | 'bubble';
   placeholder: string;
+}
+
+export type StyleFunc = (provided: object) => object;
+export interface CustomStyles {
+  toolbar?: {
+    provider?: StyleFunc;
+    root?: StyleFunc;
+    toolset?: {
+      root?: StyleFunc;
+      listButton?: {
+        overlay: StyleFunc;
+        tool: StyleFunc;
+        text: StyleFunc;
+        image: StyleFunc;
+      };
+      colorListButton?: {
+        overlay: StyleFunc;
+        tool: StyleFunc;
+        image: StyleFunc;
+      };
+    };
+  };
+  separator?: StyleFunc;
+  selection?: {
+    root?: StyleFunc;
+    scroll?: StyleFunc;
+    close?: {
+      view?: StyleFunc;
+      text?: StyleFunc;
+    };
+    textToggle?: {
+      overlay?: StyleFunc;
+      tool?: StyleFunc;
+      text?: StyleFunc;
+    };
+    iconToggle?: {
+      overlay?: StyleFunc;
+      tool?: StyleFunc;
+      image?: StyleFunc;
+    };
+    colorToggle?: {
+      overlay?: StyleFunc;
+      tool?: StyleFunc;
+      noColor?: StyleFunc;
+    };
+  };
+  // [fieldName: string]: (provided: StyleProp<ViewStyle>) => object;
 }

@@ -4,7 +4,12 @@ import * as React from 'react';
 import { WebView, WebViewProps } from 'react-native-webview';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { createHtml } from '../utils/editor-utils';
-import type { EditorMessage, EditorResponse, QuillConfig } from '../types';
+import type {
+  CustomFont,
+  EditorMessage,
+  EditorResponse,
+  QuillConfig,
+} from '../types';
 import type {
   EditorEventHandler,
   EditorEventType,
@@ -22,6 +27,8 @@ export interface EditorState {
 export interface EditorProps {
   style?: StyleProp<ViewStyle>;
   quill?: QuillConfig;
+  customFonts?: Array<CustomFont>;
+  defaultFontFamily?: string;
   initialHtml?: string;
   customStyles?: string[];
   import3rdParties?: 'local' | 'cdn';
@@ -36,6 +43,7 @@ export interface EditorProps {
   webview?: WebViewProps;
   onBlur?: () => void;
   onFocus?: () => void;
+  customJS?: string;
 }
 
 export default class QuillEditor extends React.Component<
@@ -87,7 +95,45 @@ export default class QuillEditor extends React.Component<
   }
 
   private getInitalHtml = (): string => {
-    return createHtml();
+    const {
+      initialHtml = '',
+      import3rdParties = 'local',
+      containerId = 'standalone-container',
+      theme = {
+        background: 'white',
+        color: 'rgb(32, 35, 42)',
+        placeholder: 'rgba(0,0,0,0.6)',
+      },
+      quill = {
+        id: 'editor-container',
+        placeholder: 'write here!',
+        modules: {
+          toolbar: false,
+        },
+        theme: 'snow',
+      },
+      customFonts = [],
+      customStyles = [],
+      defaultFontFamily = undefined,
+      customJS = '',
+    } = this.props;
+
+    return createHtml({
+      initialHtml,
+      placeholder: quill.placeholder,
+      theme: quill.theme ? quill.theme : 'snow',
+      toolbar: JSON.stringify(quill.modules?.toolbar),
+      libraries: import3rdParties,
+      editorId: quill.id ? quill.id : 'editor-container',
+      defaultFontFamily,
+      containerId,
+      color: theme.color,
+      fonts: customFonts,
+      backgroundColor: theme.background,
+      placeholderColor: theme.placeholder,
+      customStyles,
+      customJS,
+    });
   };
 
   private getKey(): string {
