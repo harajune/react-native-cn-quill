@@ -1,3 +1,5 @@
+// @ts-nocheck
+// TODO: remove nocheck
 import * as React from 'react';
 import { WebView, WebViewProps } from 'react-native-webview';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
@@ -260,7 +262,7 @@ export default class QuillEditor extends React.Component<
       dataDetectorTypes="none"
       {...props}
       javaScriptEnabled={true}
-      source={{ html: content }}
+      source={require('../../dist/index.html')}
       ref={this._webview}
       onMessage={this.onMessage}
     />

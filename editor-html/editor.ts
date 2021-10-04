@@ -1,5 +1,6 @@
 import Quill from 'quill'
 import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
 import './editor.css'
 
 export const quill = new Quill(
@@ -12,8 +13,6 @@ export const quill = new Quill(
     theme: 'snow'
   }
 )
-
-console.log('test ttttttttttttttttt')
 
 //TODO: make the code typescript
 var sendMessage = function (message) {
